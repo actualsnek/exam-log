@@ -218,13 +218,18 @@ a:hover { color: var(--accent-h); }
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
 .auth-logo-wordmark {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.auth-logo-wordmark .logo-mark-et {
+  width: 32px; height: 32px;
+  font-size: 14px; font-weight: 800;
+  border-radius: 9px;
 }
 .auth-logo-name {
   font-family: var(--font);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
-  letter-spacing: -.3px;
+  letter-spacing: -.4px;
   color: var(--text);
   line-height: 1;
 }
@@ -378,15 +383,16 @@ button:disabled {
 }
 .logo-mark-et {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px;
+  width: 26px; height: 26px;
   background: var(--accent);
   color: #fff;
   font-family: var(--font);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: -.2px;
-  border-radius: 6px;
+  font-size: 12px; font-weight: 800;
+  letter-spacing: -.5px;
+  border-radius: 7px;
   flex-shrink: 0;
   line-height: 1;
+  user-select: none;
 }
 .topbar-logo-text {
   font-family: var(--font);
