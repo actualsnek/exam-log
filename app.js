@@ -1750,13 +1750,13 @@ function detailRowHTML(exam) {
 
         <!-- BLOCK 2: Content buttons -->
         <div class="exp-field-btns">
-          <button class="exp-field-btn${exam.eligibility ? '' : ' empty'}" onclick="openFieldView('${exam.id}','eligibility')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
-            Eligibility${exam.eligibility ? '' : ' <span class="fbtn-empty">empty</span>'}
-          </button>
           <button class="exp-field-btn${exam.info ? '' : ' empty'}" onclick="openFieldView('${exam.id}','info')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8" stroke-linecap="round" stroke-width="2.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
             Info${exam.info ? '' : ' <span class="fbtn-empty">empty</span>'}
+          </button>
+          <button class="exp-field-btn${exam.eligibility ? '' : ' empty'}" onclick="openFieldView('${exam.id}','eligibility')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
+            Eligibility${exam.eligibility ? '' : ' <span class="fbtn-empty">empty</span>'}
           </button>
           <button class="exp-field-btn${exam.syllabus ? '' : ' empty'}" onclick="openFieldView('${exam.id}','syllabus')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -3187,13 +3187,13 @@ function mobileCardHTML(exam) {
       </div>` : ''}
 
       <div class="m-detail-field-btns">
-        <button class="m-detail-field-btn${exam.eligibility ? '' : ' empty'}" onclick="event.stopPropagation();openFieldView('${exam.id}','eligibility')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
-          Eligibility${exam.eligibility ? '' : ' <span class="fbtn-empty">empty</span>'}
-        </button>
         <button class="m-detail-field-btn${exam.info ? '' : ' empty'}" onclick="event.stopPropagation();openFieldView('${exam.id}','info')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8" stroke-linecap="round" stroke-width="2.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
           Info${exam.info ? '' : ' <span class="fbtn-empty">empty</span>'}
+        </button>
+        <button class="m-detail-field-btn${exam.eligibility ? '' : ' empty'}" onclick="event.stopPropagation();openFieldView('${exam.id}','eligibility')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
+          Eligibility${exam.eligibility ? '' : ' <span class="fbtn-empty">empty</span>'}
         </button>
         <button class="m-detail-field-btn${exam.syllabus ? '' : ' empty'}" onclick="event.stopPropagation();openFieldView('${exam.id}','syllabus')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
