@@ -1192,11 +1192,11 @@ function tableRowHTML(exam, num) {
       }
     </td>
     <td class="td-name" onclick="toggleExpand('${exam.id}')" style="cursor:pointer">${escHtml(exam.name)}</td>
-    <td class="td-year">${yearHTML}</td>
+    <td class="td-year" onclick="toggleExpand('${exam.id}')" style="cursor:pointer">${yearHTML}</td>
     <td class="td-body" onclick="toggleExpand('${exam.id}')" style="cursor:pointer" title="${escHtml(exam.conductingBody || '')}">${exam.conductingBody ? escHtml(exam.conductingBody) : '<span style="color:var(--muted)">—</span>'}</td>
-    <td class="td-applyby">${applyByHTML}</td>
-    <td class="td-examdate">${examDateHTML}</td>
-    <td class="td-status">${statusCls === 'na' ? '<span style="color:var(--muted)">—</span>' : `<span class="status-pill ${statusCls}">${statusLabel}</span>`}</td>
+    <td class="td-applyby" onclick="toggleExpand('${exam.id}')" style="cursor:pointer">${applyByHTML}</td>
+    <td class="td-examdate" onclick="toggleExpand('${exam.id}')" style="cursor:pointer">${examDateHTML}</td>
+    <td class="td-status" onclick="toggleExpand('${exam.id}')" style="cursor:pointer">${statusCls === 'na' ? '<span style="color:var(--muted)">—</span>' : `<span class="status-pill ${statusCls}">${statusLabel}</span>`}</td>
     <td class="td-applied">
       <div class="row-checkbox${exam.applied ? ' checked' : ''}" onclick="toggleApplied('${exam.id}')" title="Toggle applied"></div>
     </td>
