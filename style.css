@@ -1668,13 +1668,14 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
    via the .md-rendered class on both elements.
 ════════════════════════════════════════ */
 .md-rendered h1,.md-rendered h2,.md-rendered h3,.md-rendered h4 { color: var(--text); font-family: var(--font); font-weight: 600; letter-spacing: -.2px; margin: 36px 0 10px; }
-.md-rendered h1 { font-size: 21px; font-weight: 600; letter-spacing: -.4px; margin-top: 4px; }
+.md-rendered h1 { font-size: 18px; font-weight: 600; letter-spacing: -.3px; margin-top: 4px; }
 .md-rendered h2 { font-size: 15px; font-weight: 600; letter-spacing: -.1px; color: var(--text2); margin-top: 40px; text-transform: uppercase; font-size: 11px; letter-spacing: .8px; }
 .md-rendered h3 { font-size: 14px; font-weight: 600; }
 .md-rendered h4 { font-size: 13px; font-weight: 600; color: var(--text2); }
 .md-rendered p  { margin-bottom: 16px; font-size: 15px; line-height: 1.9; color: var(--text); }
 .md-rendered strong { color: var(--text); font-weight: 700; }
 .md-rendered em { font-style: italic; color: var(--text); }
+.md-rendered h1 em, .md-rendered h2 em, .md-rendered h3 em, .md-rendered h4 em { font-style: normal; font-weight: 400; color: var(--muted); font-size: .9em; }
 .md-rendered u  { text-decoration: underline; text-underline-offset: 2px; }
 .md-rendered s  { text-decoration: line-through; color: var(--muted); }
 .md-rendered mark { background: rgba(245,197,24,.25); color: var(--text); padding: 1px 3px; border-radius: 3px; }
@@ -1729,13 +1730,13 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
 .md-rendered .task-cb--checked { background: var(--accent); border-color: var(--accent); }
 .md-rendered .task-cb--checked::after { content: ''; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
 .md-rendered .task-done .task-label { text-decoration: line-through; color: var(--muted); opacity: .6; }
-.md-rendered .md-callout { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-radius: var(--r); margin: 16px 0; font-size: 14px; line-height: 1.7; }
-.md-rendered .callout-icon { font-size: 13px; flex-shrink: 0; margin-top: 2px; opacity: .8; }
-.md-rendered .callout-body { color: var(--text); flex: 1; }
-.md-rendered .callout-info    { background: rgba(99,102,241,.06); border-left: 2px solid #6366f1; }
-.md-rendered .callout-warn    { background: rgba(245,197,24,.07); border-left: 2px solid #f5c518; }
-.md-rendered .callout-tip     { background: rgba(16,185,129,.06); border-left: 2px solid #10b981; }
-.md-rendered .callout-success { background: rgba(34,197,94,.06);  border-left: 2px solid #22c55e; }
+.md-rendered .md-callout { display: block; padding: 10px 16px; border-radius: 0; margin: 20px 0; font-size: 14px; line-height: 1.8; }
+.md-rendered .callout-icon { display: none; }
+.md-rendered .callout-body { color: var(--text2); flex: 1; }
+.md-rendered .callout-info    { background: none; border-left: 2px solid #6366f1; color: var(--text2); }
+.md-rendered .callout-warn    { background: none; border-left: 2px solid #f5c518; color: var(--text2); }
+.md-rendered .callout-tip     { background: none; border-left: 2px solid #10b981; color: var(--text2); }
+.md-rendered .callout-success { background: none; border-left: 2px solid #22c55e; color: var(--text2); }
 .md-rendered .md-collapsible { border: 1px solid var(--border); border-radius: var(--r); margin: 10px 0; overflow: hidden; }
 .md-rendered .md-collapsible-title { display: flex; align-items: center; gap: 8px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; background: var(--bg2); list-style: none; user-select: none; }
 .md-rendered .md-collapsible-title::before { content: '▶'; font-size: 9px; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
