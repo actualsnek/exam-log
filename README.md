@@ -1,6 +1,6 @@
 # Exam Tracker
 
-Track competitive exams, deadlines, and prep — personal, fast, no fluff.
+Track exams, deadlines, and prep.
 
 ## Stack
 
