@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="theme-color" content="#131416"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Exams"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='23' font-family='Georgia%2C serif' font-size='22' font-weight='700' fill='%23f97316' text-anchor='middle' transform='rotate(-8 16 16)'%3Eet%3C/text%3E%3C/svg%3E"/>
+<title>Exam Tracker</title>
+<script>document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'dark');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════════════════ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-bg-grid"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg class="auth-logo-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M9 3.5 C9 2.67 9.67 2 10.5 2 h3 C14.33 2 15 2.67 15 3.5 v1 C15 5.33 14.33 6 13.5 6 h-3 C9.67 6 9 5.33 9 4.5 Z" fill="currentColor" opacity=".45"/>
+        <line x1="7.5" y1="10" x2="16.5" y2="10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>
+        <line x1="7.5" y1="13.5" x2="13" y2="13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>
+        <polyline points="7.5 17.5 10 20 16.5 13.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Exam <span>Tracker</span>
+      <div class="auth-tagline">दीर्घसूत्री विनश्यति ।</div>
+    </div>
+    <p class="auth-sub">Your personal exam command centre</p>
+
+    <div id="auth-tabs" class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+    </div>
+
+    <div id="auth-error" class="auth-error" style="display:none"></div>
+    <div id="auth-success" class="auth-success" style="display:none"></div>
+
+    <!-- Login Form -->
+    <div id="login-form">
+      <div class="field-group">
+        <label class="field-label" for="login-email">Email</label>
+        <input type="email" id="login-email" class="field-input" placeholder="you@email.com"
+               autocomplete="email" inputmode="email"
+               onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="login-password">Password</label>
+        <div class="field-input-wrap">
+          <input type="password" id="login-password" class="field-input" placeholder="••••••••"
+                 autocomplete="current-password"
+                 onkeydown="if(event.key==='Enter')handleLogin()"/>
+          <button type="button" class="pw-toggle" onclick="togglePassword('login-password',this)" tabindex="-1" aria-label="Show password">
+            <svg class="pw-eye pw-eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="pw-eye pw-eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="handleLogin()">
+        <span id="login-btn-text">Sign In</span>
+      </button>
+      <button class="btn-link" id="forgot-btn" onclick="handleForgotPassword()">Forgot password?</button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" style="display:none">
+      <div class="field-group">
+        <label class="field-label" for="reg-name">Display Name</label>
+        <input type="text" id="reg-name" class="field-input" placeholder="Your name"
+               autocomplete="name" autocapitalize="words"
+               onkeydown="if(event.key==='Enter')document.getElementById('reg-email').focus()"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="reg-email">Email</label>
+        <input type="email" id="reg-email" class="field-input" placeholder="you@email.com"
+               autocomplete="email" inputmode="email"
+               onkeydown="if(event.key==='Enter')document.getElementById('reg-password').focus()"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="reg-password">Password</label>
+        <div class="field-input-wrap">
+          <input type="password" id="reg-password" class="field-input" placeholder="min 6 characters"
+                 autocomplete="new-password"
+                 onkeydown="if(event.key==='Enter')handleRegister()"/>
+          <button type="button" class="pw-toggle" onclick="togglePassword('reg-password',this)" tabindex="-1" aria-label="Show password">
+            <svg class="pw-eye pw-eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="pw-eye pw-eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="handleRegister()">
+        <span id="register-btn-text">Create Account</span>
+      </button>
+    </div>
+
+    <div class="auth-divider"><span>or</span></div>
+    <button class="btn-google" onclick="handleGoogleLogin()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════════════ -->
+<div id="app" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <svg class="logo-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="3" width="14" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M9 3.5 C9 2.67 9.67 2 10.5 2 h3 C14.33 2 15 2.67 15 3.5 v1 C15 5.33 14.33 6 13.5 6 h-3 C9.67 6 9 5.33 9 4.5 Z" fill="currentColor" opacity=".45"/>
+        <line x1="7.5" y1="10" x2="16.5" y2="10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>
+        <line x1="7.5" y1="13.5" x2="13" y2="13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>
+        <polyline points="7.5 17.5 10 20 16.5 13.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="topbar-logo-text"><span class="logo-exam">Exam</span><span class="logo-tracker">Tracker</span></span>
+    </div>
+    <div class="topbar-right">
+      <!-- Data dropdown -->
+      <div class="data-dd-wrap" id="data-dd-wrap">
+        <button class="icon-btn" id="data-dd-btn" onclick="toggleDataDropdown()" title="Import / Export data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg></button>
+        <div class="data-dd-menu" id="data-dd-menu" style="display:none">
+          <div class="data-dd-header">Data</div>
+          <button class="data-dd-item" onclick="exportJSON(); document.getElementById('data-dd-menu').style.display='none'">
+            <div class="data-dd-icon data-dd-icon--export">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div class="data-dd-body">
+              <span class="data-dd-label">Export JSON</span>
+              <span class="data-dd-sub">Download all exams</span>
+            </div>
+            <svg class="data-dd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <label class="data-dd-item data-dd-item--label">
+            <div class="data-dd-icon data-dd-icon--import">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="data-dd-body">
+              <span class="data-dd-label">Import JSON</span>
+              <span class="data-dd-sub">Restore from file</span>
+            </div>
+            <svg class="data-dd-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            <input type="file" accept=".json" style="display:none" onchange="importJSON(event); document.getElementById('data-dd-menu').style.display='none'"/>
+          </label>
+        </div>
+      </div>
+      <button class="icon-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">
+        <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <div class="avatar" id="user-avatar" onclick="showProfile()"></div>
+    </div>
+  </header>
+
+
+  <!-- COUNTDOWN STRIP -->
+  <div class="countdown-strip" id="countdown-strip">
+    <div class="countdown-label" id="countdown-label"></div>
+    <div class="countdown-rings" id="countdown-rings"></div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+
+    <!-- Status dropdown -->
+    <div class="tag-dd-wrap" id="status-dd-wrap">
+      <button class="tag-dd-btn" id="status-dd-btn" onclick="toggleStatusDropdown()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dd-btn-icon"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+        <span id="status-dd-label">Status</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="dd-btn-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="tag-dd-menu" id="status-dd-menu" style="display:none">
+        <div id="status-dd-list">
+          <div class="tag-dd-item active" data-status="all"      onclick="setStatusFilter('all')">      <div class="tag-dd-checkbox"></div><span>All</span></div>
+          <div class="tag-dd-item"        data-status="open"     onclick="setStatusFilter('open')">     <div class="tag-dd-checkbox"></div><span>Open</span></div>
+          <div class="tag-dd-item"        data-status="closed"   onclick="setStatusFilter('closed')">   <div class="tag-dd-checkbox"></div><span>Closed</span></div>
+          <div class="tag-dd-item"        data-status="applied"  onclick="setStatusFilter('applied')">  <div class="tag-dd-checkbox"></div><span>Applied</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tag dropdown (unchanged) -->
+    <div class="tag-dd-wrap" id="tag-dd-wrap">
+      <button class="tag-dd-btn" onclick="toggleTagDropdown()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dd-btn-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Tag
+        <span class="tag-active-count" id="tag-active-count" style="display:none">0</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="dd-btn-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="tag-dd-menu" id="tag-dd-menu" style="display:none">
+        <div id="tag-dd-list"><div class="tag-dd-empty">No tags yet</div></div>
+      </div>
+    </div>
+
+    <!-- Sort dropdown -->
+    <div class="tag-dd-wrap" id="sort-dd-wrap">
+      <button class="tag-dd-btn" id="sort-dd-btn" onclick="toggleSortDropdown()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dd-btn-icon"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+        <span id="sort-dd-label">Sort</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="dd-btn-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="tag-dd-menu" id="sort-dd-menu" style="display:none">
+        <div id="sort-dd-list">
+          <div class="tag-dd-item active" data-sort="manual"         onclick="setSortOrder('manual')">        <div class="tag-dd-checkbox"></div><span>Custom Order</span></div>
+          <div class="tag-dd-item"        data-sort="createdAt_desc" onclick="setSortOrder('createdAt_desc')"><div class="tag-dd-checkbox"></div><span>Added ↓</span></div>
+          <div class="tag-dd-item"        data-sort="createdAt_asc"  onclick="setSortOrder('createdAt_asc')"> <div class="tag-dd-checkbox"></div><span>Added ↑</span></div>
+          <div class="tag-dd-item"        data-sort="deadline_asc"   onclick="setSortOrder('deadline_asc')">  <div class="tag-dd-checkbox"></div><span>Deadline ↑</span></div>
+          <div class="tag-dd-item"        data-sort="deadline_desc"  onclick="setSortOrder('deadline_desc')"> <div class="tag-dd-checkbox"></div><span>Deadline ↓</span></div>
+          <div class="tag-dd-item"        data-sort="name_asc"       onclick="setSortOrder('name_asc')">      <div class="tag-dd-checkbox"></div><span>A-Z</span></div>
+          <div class="tag-dd-item"        data-sort="name_desc"      onclick="setSortOrder('name_desc')">     <div class="tag-dd-checkbox"></div><span>Z-A</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile-only: single Filters pill replacing the 3 dropdowns -->
+    <button class="mobile-filter-btn" id="mobile-filter-btn" onclick="openMobileFilterSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filters
+      <span class="mobile-filter-badge" id="mobile-filter-badge" style="display:none">0</span>
+    </button>
+
+    <div class="filter-sep"></div>
+
+    <!-- Right side: clear all + search + add -->
+    <div class="filter-right">
+      <button class="btn-clear-all" id="btn-clear-all" onclick="clearAllFilters()" style="display:none">✕ Clear</button>
+      <div class="inline-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" class="inline-search-input" placeholder="Search…" oninput="handleSearch(this.value)"/>
+      </div>
+      <button class="btn-add" onclick="openAddExam()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span class="btn-add-text">Add Exam</span>
+      </button>
+      <button class="btn-reorder-mode" id="btn-reorder-mode" onclick="toggleReorderMode()" title="Reorder exams">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/><polyline points="16 3 19 6 16 9"/><polyline points="16 15 19 18 16 21"/></svg>
+      </button>
+      <button class="btn-select-mode" id="btn-select-mode" onclick="toggleSelectionMode()" title="Select exams">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="7" height="7" rx="1"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/></svg>
+        Select
+      </button>
+      <button class="btn-delete-selected" id="btn-delete-selected" onclick="deleteSelected()" style="display:none">Delete (0)</button>
+    </div>
+  </div>
+
+  <!-- EXAM TABLE -->
+  <main class="exam-list">
+    <!-- Skeleton loader — visible only during initial Firestore fetch -->
+    <div id="skeleton-loader" style="display:none">
+      <table class="exam-table skeleton-table">
+        <thead>
+          <tr>
+            <th class="th-expand-num"></th>
+            <th class="th-name">EXAM</th>
+            <th class="th-year">YEAR</th>
+            <th class="th-body">BODY</th>
+            <th class="th-applyby">APPLY BY</th>
+            <th class="th-examdate">EXAM ON</th>
+            <th class="th-status">STATUS</th>
+            <th class="th-applied">APPLIED</th>
+            <th class="th-pin">PIN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="skeleton-row"><td><div class="sk sk-icon"></div></td><td><div class="sk sk-name"></div></td><td><div class="sk sk-short"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-pill"></div></td><td><div class="sk sk-icon"></div></td><td><div class="sk sk-icon"></div></td></tr>
+          <tr class="skeleton-row"><td><div class="sk sk-icon"></div></td><td><div class="sk sk-name sk-w80"></div></td><td><div class="sk sk-short"></div></td><td><div class="sk sk-med sk-w60"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-pill"></div></td><td><div class="sk sk-icon"></div></td><td><div class="sk sk-icon"></div></td></tr>
+          <tr class="skeleton-row"><td><div class="sk sk-icon"></div></td><td><div class="sk sk-name sk-w90"></div></td><td><div class="sk sk-short"></div></td><td><div class="sk sk-med sk-w75"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-pill"></div></td><td><div class="sk sk-icon"></div></td><td><div class="sk sk-icon"></div></td></tr>
+          <tr class="skeleton-row"><td><div class="sk sk-icon"></div></td><td><div class="sk sk-name sk-w70"></div></td><td><div class="sk sk-short"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-pill"></div></td><td><div class="sk sk-icon"></div></td><td><div class="sk sk-icon"></div></td></tr>
+          <tr class="skeleton-row"><td><div class="sk sk-icon"></div></td><td><div class="sk sk-name sk-w85"></div></td><td><div class="sk sk-short"></div></td><td><div class="sk sk-med sk-w60"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-med"></div></td><td><div class="sk sk-pill"></div></td><td><div class="sk sk-icon"></div></td><td><div class="sk sk-icon"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- True empty: no exams at all -->
+    <div class="list-empty" id="list-empty" style="display:none">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+      <div class="empty-title">No exams yet</div>
+      <div class="empty-sub">Add your first exam to get started</div>
+      <button class="btn-primary btn-primary--cta" onclick="openAddExam()">Add Exam</button>
+    </div>
+    <!-- Filtered empty: exams exist but none match current filters -->
+    <div class="list-empty" id="list-empty-filtered" style="display:none">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <div class="empty-title">No exams match your filters</div>
+      <div class="empty-sub">Try adjusting or clearing your filters to see results</div>
+      <button class="btn-primary btn-primary--cta" onclick="clearAllFilters()">Clear Filters</button>
+    </div>
+
+    <!-- Mobile card list (visible only on ≤640px, table hidden) -->
+    <div id="mobile-card-list" style="display:none"></div>
+
+    <div class="table-scroll" id="table-scroll">
+      <table class="exam-table">
+        <thead>
+          <tr>
+            <th class="th-expand-num">
+              <div class="row-select-cb" id="select-all-cb" onclick="toggleSelectAll()" style="display:none"></div>
+            </th>
+            <th class="th-name">EXAM</th>
+            <th class="th-year">YEAR</th>
+            <th class="th-body">BODY</th>
+            <th class="th-applyby">APPLY BY</th>
+            <th class="th-examdate">EXAM ON</th>
+            <th class="th-status">STATUS</th>
+            <th class="th-applied">APPLIED</th>
+            <th class="th-pin">PIN</th>
+          </tr>
+        </thead>
+        <tbody id="exam-tbody"></tbody>
+      </table>
+    </div>
+  </main>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════════ -->
+
+<!-- ADD / EDIT EXAM MODAL -->
+<div id="exam-modal" class="modal-overlay" style="display:none" onclick="closeModalOnOverlay(event,'exam-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="exam-modal-title">Add Exam</div>
+      <button class="modal-close" onclick="closeExamModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="exam-id"/>
+
+      <div class="form-row">
+        <div class="field-group field-group--flex-2">
+          <label class="field-label">Exam Name *</label>
+          <input type="text" id="f-name" class="field-input" placeholder="e.g. SSC CGL 2025" onkeydown="if(event.key==='Enter')saveExam()"/>
+        </div>
+        <div class="field-group field-group--flex-1">
+          <label class="field-label">Conducting Body</label>
+          <input type="text" id="f-conducting-body" class="field-input" placeholder="e.g. SSC, UPSC, NIACL" onkeydown="if(event.key==='Enter')saveExam()"/>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Subtitle</label>
+        <input type="text" id="f-subtitle" class="field-input" placeholder="e.g. Tier I · Tier II · Document Verification" onkeydown="if(event.key==='Enter')saveExam()"/>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group field-group--flex-1">
+          <label class="field-label">Exam Type</label>
+          <select id="f-exam-type" class="field-input field-select" onchange="toggleJobFields()">
+            <option value="job">Job</option>
+            <option value="entrance">Entrance / Education</option>
+          </select>
+        </div>
+        <div class="field-group field-group--flex-1">
+          <label class="field-label">Year</label>
+          <input type="text" id="f-year" class="field-input" placeholder="e.g. 2026" onkeydown="if(event.key==='Enter')saveExam()"/>
+        </div>
+      </div>
+
+      <!-- Job-only fields -->
+      <div class="form-row" id="job-fields-row">
+        <div class="field-group field-group--flex-1">
+          <label class="field-label">Vacancies</label>
+          <input type="text" id="f-vacancies" class="field-input" placeholder="e.g. 17,727" onkeydown="if(event.key==='Enter')saveExam()"/>
+        </div>
+        <div class="field-group field-group--flex-1">
+          <label class="field-label">Pay Scale</label>
+          <div class="field-prefix-wrap">
+            <span class="field-prefix">₹</span>
+            <input type="text" id="f-pay" class="field-input field-input--prefixed" placeholder="25,500 – 81,100" onkeydown="if(event.key==='Enter')saveExam()"/>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-row">
+        <div class="field-group field-group--flex-1">
+          <label class="field-label">Apply By</label>
+          <input type="date" id="f-last-date" class="field-input"/>
+        </div>
+        <div class="field-group field-group--flex-1">
+          <div class="field-label-row">
+            <label class="field-label">Exam On</label>
+            <label class="toggle-label tentative-toggle" title="Mark as tentative date">
+              <input type="checkbox" class="toggle-check" id="f-exam-tentative"/>
+              <span class="toggle-track"></span>
+              <span>tentative</span>
+            </label>
+          </div>
+          <input type="date" id="f-exam-date" class="field-input"/>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Website URL</label>
+        <input type="url" id="f-website" class="field-input" placeholder="https://ssc.nic.in" onkeydown="if(event.key==='Enter')saveExam()"/>
+      </div>
+
+      <div class="md-fields-row">
+        <div class="field-group">
+          <label class="field-label">Eligibility</label>
+          <button type="button" class="md-inline-btn" onclick="openMdFromModal('eligibility')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span id="prev-eligibility">Not added</span>
+          </button>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Syllabus</label>
+          <button type="button" class="md-inline-btn" onclick="openMdFromModal('syllabus')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span id="prev-syllabus">Not added</span>
+          </button>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Info</label>
+          <button type="button" class="md-inline-btn" onclick="openMdFromModal('info')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span id="prev-info">Not added</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Tags <span class="label-hint">(comma separated)</span></label>
+        <input type="text" id="f-tags" class="field-input" placeholder="Banking, Central Govt, State…" onkeydown="if(event.key==='Enter')saveExam()"/>
+      </div>
+
+      <!-- Resources -->
+      <div class="field-group">
+        <label class="field-label">Resources</label>
+        <div class="res-list" id="modal-res-list"></div>
+        <div class="res-add-row">
+          <select class="field-input res-type-sel" id="res-type-sel" onchange="onResTypeChange()">
+            <option value="LINK">LINK</option><option value="PDF">PDF</option>
+          </select>
+          <input class="field-input field-input--flex-1" id="res-label-input" placeholder="Label text…"/>
+          <input class="field-input field-input--flex-15" id="res-url-input" placeholder="URL…"/>
+          <button type="button" class="res-add-btn" onclick="modalAddResource()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="form-row form-row--toggles">
+        <label class="toggle-label">
+          <input type="checkbox" id="f-applied" class="toggle-check"/>
+          <div class="toggle-track"></div>
+          <span>Applied</span>
+        </label>
+        <label class="toggle-label">
+          <input type="checkbox" id="f-pinned" class="toggle-check" onchange="checkPinLimit(this)"/>
+          <div class="toggle-track"></div>
+          <span>Pin to countdown</span>
+        </label>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeExamModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveExam()" id="save-exam-btn">Save Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal" class="modal-overlay" style="display:none" onclick="closeModalOnOverlay(event,'profile-modal')">
+  <div class="modal modal-profile">
+    <div class="modal-header">
+      <div class="modal-title">Profile & Settings</div>
+      <button class="modal-close" onclick="closeProfile()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body modal-body--flush">
+
+      <!-- Avatar + name + email -->
+      <div class="profile-hero">
+        <div class="profile-avatar" id="profile-avatar-big"></div>
+        <div class="profile-name" id="profile-name-display">—</div>
+        <div class="profile-email" id="profile-email-display">—</div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-val" id="stat-exams">0</div>
+          <div class="profile-stat-label">Exams</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-val" id="stat-applied">0</div>
+          <div class="profile-stat-label">Applied</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-val" id="stat-pinned">0</div>
+          <div class="profile-stat-label">Pinned</div>
+        </div>
+      </div>
+
+      <!-- Account section -->
+      <div class="pref-section-title">Account</div>
+      <div class="pref-list">
+        <button class="pref-row" onclick="handleEditDisplayName()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+          <span class="pref-row-label">Edit Display Name</span>
+          <svg class="pref-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="pref-row" onclick="handleChangePassword()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="pref-row-label">Change Password</span>
+          <svg class="pref-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="pref-row pref-row-signout" onclick="handleSignOut()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span class="pref-row-label">Sign Out</span>
+          <svg class="pref-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="pref-section-title pref-section-danger" id="pref-danger-title">Danger Zone</div>
+      <div class="pref-list pref-list-danger pref-list--mt">
+        <button class="pref-row pref-row-delete" onclick="confirmDeleteAccount()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          <span class="pref-row-label">Delete Account</span>
+          <svg class="pref-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DISCARD CHANGES MODAL -->
+
+<!-- CONFIRM DELETE MODAL -->
+<div id="confirm-modal" class="modal-overlay" style="display:none" onclick="closeModalOnOverlay(event,'confirm-modal')">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" id="confirm-title">Confirm</div>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" class="confirm-message"></p>
+      <div id="confirm-password-group" class="confirm-password-group" style="display:none">
+        <label class="field-label">Enter your password to confirm</label>
+        <input type="password" id="confirm-password-input" class="field-input" placeholder="Your current password"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn-danger" id="confirm-action-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MARKDOWN EDITOR PANEL — full-page, from modal
+════════════════════════════════════════════════ -->
+<div id="md-panel" class="ep-overlay" style="display:none">
+  <div class="ep-shell">
+
+    <!-- Header -->
+    <div class="ep-header">
+      <button class="ep-back-btn" onclick="closeMdPanel()" title="Back to exam">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="ep-header-meta">
+        <span class="ep-field-label" id="md-panel-title">Syllabus</span>
+        <span class="ep-header-sep">·</span>
+        <span class="ep-exam-name" id="md-panel-sub">SSC CGL 2025</span>
+      </div>
+      <div class="ep-header-right">
+        <span class="ep-save-status" id="md-save-status"></span>
+        <button class="ep-btn-primary" onclick="saveMdPanel()">Save</button>
+      </div>
+    </div>
+
+    <!-- Write / Preview tab switcher -->
+    <div class="ep-tabs">
+      <button class="ep-tab ep-tab--active" id="md-tab-write" onclick="epSwitchTab('md','write')">Write</button>
+      <button class="ep-tab" id="md-tab-preview" onclick="epSwitchTab('md','preview')">Preview</button>
+    </div>
+
+    <!-- Toolbar strip (own row, only shown in write mode) -->
+    <div class="ep-toolbar-strip" id="md-toolbar-strip">
+      <div id="md-panel-toolbar"></div>
+    </div>
+
+    <!-- Body: write pane -->
+    <div class="ep-body" id="md-write-body">
+      <textarea id="md-editor-textarea" class="ep-textarea" oninput="mdPreview()" placeholder="Start writing…"></textarea>
+    </div>
+
+    <!-- Body: preview pane (hidden by default) -->
+    <div class="ep-body ep-body--preview" id="md-preview-body" style="display:none">
+      <div class="ep-preview-inner">
+        <div id="md-preview" class="md-rendered"></div>
+      </div>
+    </div>
+
+    <!-- hidden elements kept for JS compat -->
+    <span style="display:none" id="md-save-status-footer"></span>
+    <div style="display:none" id="md-divider-1"></div>
+    <div style="display:none" id="md-preview-pane-1"></div>
+    <span style="display:none" id="md-preview-toggle-label-1"></span>
+    <button style="display:none" id="md-preview-toggle-1"></button>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FIELD VIEW PANEL — full-page, from expanded row
+════════════════════════════════════════════════ -->
+<div id="fv-panel" class="ep-overlay" style="display:none">
+  <div class="ep-shell">
+
+    <!-- VIEW MODE -->
+    <div id="fv-view-mode" style="display:flex;flex-direction:column;height:100%;min-height:0;">
+
+      <div class="ep-header">
+        <button class="ep-back-btn" onclick="closeFieldView()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="ep-header-meta">
+          <span class="ep-field-label" id="fv-title">Eligibility</span>
+          <span class="ep-header-sep">·</span>
+          <span class="ep-exam-name" id="fv-sub">SSC CGL 2025</span>
+        </div>
+        <div class="ep-header-right">
+          <button class="ep-btn-edit" id="fv-edit-btn" onclick="switchToEditMode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+        </div>
+      </div>
+
+      <div class="ep-view-body">
+        <div class="ep-view-inner">
+          <div id="fv-content" class="md-rendered"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EDIT MODE (hidden by default) -->
+    <div id="fv-edit-mode" style="display:none;flex-direction:column;height:100%;min-height:0;">
+
+      <div class="ep-header">
+        <button class="ep-back-btn" onclick="switchToViewMode()" title="Back to view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="ep-header-meta">
+          <span class="ep-field-label" id="fv-edit-title">Edit</span>
+          <span class="ep-header-sep">·</span>
+          <span class="ep-exam-name" id="fv-edit-examname"></span>
+        </div>
+        <div class="ep-header-right">
+          <span class="ep-save-status" id="fv-save-status"></span>
+          <button class="ep-btn-primary" onclick="saveFvPanel()">Save</button>
+        </div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="ep-tabs">
+        <button class="ep-tab ep-tab--active" id="fv-tab-write" onclick="epSwitchTab('fv','write')">Write</button>
+        <button class="ep-tab" id="fv-tab-preview" onclick="epSwitchTab('fv','preview')">Preview</button>
+      </div>
+
+      <!-- Toolbar strip -->
+      <div class="ep-toolbar-strip" id="fv-toolbar-strip">
+        <div id="fv-panel-toolbar"></div>
+      </div>
+
+      <!-- Write body -->
+      <div class="ep-body" id="fv-write-body">
+        <textarea id="fv-editor-textarea" class="ep-textarea" oninput="fvLivePreview()" placeholder="Start writing…"></textarea>
+      </div>
+
+      <!-- Preview body -->
+      <div class="ep-body ep-body--preview" id="fv-preview-body" style="display:none">
+        <div class="ep-preview-inner">
+          <div id="fv-live-preview" class="md-rendered"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- hidden elements kept for JS compat -->
+    <div style="display:none" id="md-divider-2"></div>
+    <div style="display:none" id="md-preview-pane-2"></div>
+    <span style="display:none" id="md-preview-toggle-label-2"></span>
+    <button style="display:none" id="md-preview-toggle-2"></button>
+
+  </div>
+</div>
+
+<!-- overlays kept for JS compat (animateOut targets them) -->
+<div id="md-overlay" style="display:none"></div>
+<div id="fv-overlay" style="display:none"></div>
+
+<!-- INPUT MODAL (replaces window.prompt for display name / password) -->
+<div id="input-modal" class="modal-overlay" style="display:none" onclick="closeModalOnOverlay(event,'input-modal')">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" id="input-modal-title">Enter value</div>
+      <button class="modal-close" onclick="closeInputModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label" id="input-modal-label"></label>
+        <input id="input-modal-field" class="field-input" placeholder=""/>
+      </div>
+      <div class="field-group" id="input-modal-field2-group" style="display:none;margin-top:12px">
+        <label class="field-label" id="input-modal-label2"></label>
+        <input id="input-modal-field2" class="field-input" placeholder=""/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeInputModal()">Cancel</button>
+      <button class="btn-primary btn-primary--auto" id="input-modal-confirm-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast" style="display:none"></div>
+
+<div id="discard-modal" class="modal-overlay" style="display:none">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">Unsaved Changes</div>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-message">You have unsaved changes. Discard them?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="discard-keep-btn">Keep Editing</button>
+      <button class="btn-danger" id="discard-confirm-btn">Discard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pick Modal — used for selective export & selective import -->
+<div id="pick-modal" class="modal-overlay" style="display:none" onclick="closePickModalOnOverlay(event)">
+  <div class="modal pick-modal-inner">
+    <div class="modal-header">
+      <div class="modal-title" id="pick-modal-title">Select Exams</div>
+      <button class="modal-close" onclick="closePickModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="pick-toolbar">
+        <button class="btn-ghost pick-sel-btn" onclick="pickSelectAll()">Select All</button>
+        <button class="btn-ghost pick-sel-btn" onclick="pickSelectNone()">Select None</button>
+        <span class="pick-count" id="pick-count">0 selected</span>
+      </div>
+      <div class="pick-list" id="pick-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closePickModal()">Cancel</button>
+      <button class="btn-primary" id="pick-confirm-btn" onclick="confirmPick()">Export</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile filter bottom sheet -->
+<div id="mobile-filter-sheet" style="display:none"
+     onclick="if(event.target===this)closeMobileFilterSheet()">
+  <div class="mfs-inner">
+    <div class="mfs-header">
+      <span class="mfs-title">Filters</span>
+      <button class="mfs-clear-btn" id="mfs-clear-btn" onclick="clearAllFilters()" style="display:none">Clear all</button>
+      <button class="mfs-close-btn" onclick="closeMobileFilterSheet()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="mfs-body">
+      <!-- Status -->
+      <div class="mfs-section">
+        <div class="mfs-section-label">Status</div>
+        <div class="mfs-chips" id="mfs-status-chips">
+          <button class="mfs-chip active" data-status="all"     onclick="setStatusFilter('all')">All</button>
+          <button class="mfs-chip"        data-status="open"    onclick="setStatusFilter('open')">Open</button>
+          <button class="mfs-chip"        data-status="closed"  onclick="setStatusFilter('closed')">Closed</button>
+          <button class="mfs-chip"        data-status="applied" onclick="setStatusFilter('applied')">Applied</button>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="mfs-section">
+        <div class="mfs-section-label">Tag</div>
+        <div class="mfs-tag-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mfs-tag-search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="mfs-tag-search" class="mfs-tag-search-input" placeholder="Search tags…" oninput="filterMfsTags(this.value)" autocomplete="off" autocorrect="off" spellcheck="false"/>
+          <button class="mfs-tag-search-clear" id="mfs-tag-search-clear" onclick="clearMfsTagSearch()" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="mfs-chips" id="mfs-tag-chips">
+          <span class="mfs-no-tags">No tags yet</span>
+        </div>
+      </div>
+
+      <!-- Sort -->
+      <div class="mfs-section">
+        <div class="mfs-section-label">Sort</div>
+        <div class="mfs-chips" id="mfs-sort-chips">
+          <button class="mfs-chip active" data-sort="manual"         onclick="setSortOrder('manual')">Custom Order</button>
+          <button class="mfs-chip"        data-sort="createdAt_desc" onclick="setSortOrder('createdAt_desc')">Added ↓</button>
+          <button class="mfs-chip"        data-sort="createdAt_asc"  onclick="setSortOrder('createdAt_asc')">Added ↑</button>
+          <button class="mfs-chip"        data-sort="deadline_asc"   onclick="setSortOrder('deadline_asc')">Deadline ↑</button>
+          <button class="mfs-chip"        data-sort="deadline_desc"  onclick="setSortOrder('deadline_desc')">Deadline ↓</button>
+          <button class="mfs-chip"        data-sort="name_asc"       onclick="setSortOrder('name_asc')">A–Z</button>
+          <button class="mfs-chip"        data-sort="name_desc"      onclick="setSortOrder('name_desc')">Z–A</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Single source of truth for the markdown toolbar -->
+<template id="md-toolbar-tpl">
+  <div class="md-toolbar">
+    <div class="md-toolbar-row">
+      <!-- Inline formatting -->
+      <button class="md-tool" onclick="mdInsert('**','**')" title="Bold (Ctrl+B)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('*','*')" title="Italic (Ctrl+I)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('__','__')" title="Underline (Ctrl+U)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('~~','~~')" title="Strikethrough"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="2" y1="12" x2="22" y2="12"/><path d="M17 6C17 6 16 4 12 4C8 4 7 6.5 7 8C7 11 10 12 12 12"/><path d="M7 18C7 18 8 20 12 20C16 20 17 17.5 17 16C17 14.5 16.2 13.5 15 13"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('==','==')" title="Highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('`','`')" title="Inline Code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+      <div class="md-tool-sep"></div>
+      <!-- Headings -->
+      <button class="md-tool md-tool--text" onclick="mdInsert('\n# ','',true)" title="Heading 1">H1</button>
+      <button class="md-tool md-tool--text" onclick="mdInsert('\n## ','',true)" title="Heading 2">H2</button>
+      <button class="md-tool md-tool--text" onclick="mdInsert('\n### ','',true)" title="Heading 3">H3</button>
+      <button class="md-tool md-tool--text" onclick="mdInsert('\n#### ','',true)" title="Heading 4">H4</button>
+      <div class="md-tool-sep"></div>
+      <!-- Lists -->
+      <button class="md-tool" onclick="mdInsert('\n- ','',true)" title="Bullet List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('\n1. ','',true)" title="Numbered List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 5h1v4" stroke-linecap="round"/><line x1="4" y1="9" x2="5.5" y2="9"/><path d="M4 14a1.5 1.5 0 0 1 3 0c0 1-1.5 2-3 3h3" stroke-linecap="round"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('\n- [ ] ','',true)" title="Task Checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="3"/><polyline points="9 12 11 14 15 10"/></svg></button>
+      <div class="md-tool-sep"></div>
+      <!-- Blocks -->
+      <button class="md-tool" onclick="mdInsert('> ','',true)" title="Blockquote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg></button>
+      <button class="md-tool" onclick="mdInsertCodeBlock()" title="Code Block (Ctrl+Shift+C)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="8 10 4 14 8 18" transform="translate(3,-4)"/><polyline points="16 10 20 14 16 18" transform="translate(-3,-4)"/></svg></button>
+      <button class="md-tool" onclick="mdInsertCallout()" title="Callout Box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></button>
+      <button class="md-tool" onclick="mdInsertCollapsible()" title="Collapsible Section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 12 15 18 9"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></button>
+      <button class="md-tool" onclick="mdInsertTable()" title="Table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/><line x1="15" y1="9" x2="15" y2="21"/></svg></button>
+      <button class="md-tool" onclick="mdInsertLink()" title="Link (Ctrl+K)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+      <button class="md-tool" onclick="mdInsert('\n---\n','',true)" title="Divider"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="2" y1="12" x2="22" y2="12"/></svg></button>
+    </div>
+  </div>
+</template>
+<script type="module" src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+  // Inject toolbar from single template into both panels
+  (function() {
+    const tpl = document.getElementById('md-toolbar-tpl');
+    ['md-panel-toolbar', 'fv-panel-toolbar'].forEach(function(id) {
+      const slot = document.getElementById(id);
+      if (slot && tpl) slot.replaceWith(tpl.content.cloneNode(true));
+    });
+  })();
+</script>
+</body>
+</html>
