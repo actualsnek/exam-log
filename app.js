@@ -359,6 +359,20 @@ function clearAuthMessages() {
   const s = document.getElementById('auth-success');
   e.style.display = 'none';
   s.style.display = 'none';
+  // Clear all field-level errors
+  ['login-email','login-password','reg-name','reg-email','reg-password'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('field-input--error');
+    const hint = document.getElementById('hint-' + id);
+    if (hint) hint.textContent = '';
+  });
+}
+
+function setFieldError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('field-input--error'); el.focus(); }
+  const hint = document.getElementById('hint-' + id);
+  if (hint) hint.textContent = msg;
 }
 
 function showAuthError(msg) {
@@ -379,12 +393,13 @@ function showAuthSuccess(msg) {
 window.handleLogin = async () => {
   const email    = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
-  if (!email || !password) return showAuthError('Please fill in all fields.');
+  clearAuthMessages();
+  if (!email)    { setFieldError('login-email',    'Email is required.'); return; }
+  if (!password) { setFieldError('login-password', 'Password is required.'); return; }
   const btnEl  = document.getElementById('login-btn-text').closest('button');
   const btnTxt = document.getElementById('login-btn-text');
   btnTxt.innerHTML = '<span class="loading-spinner"></span>Signing in…';
   btnEl.disabled = true;
-  clearAuthMessages();
   try {
     await signInWithEmailAndPassword(auth, email, password);
     // On success onAuthStateChanged fires → showApp(). Button stays disabled/hidden
@@ -392,7 +407,16 @@ window.handleLogin = async () => {
   } catch (e) {
     btnTxt.textContent = 'Sign In';
     btnEl.disabled = false;
-    showAuthError(friendlyAuthError(e.code));
+    const code = e.code;
+    if (code === 'auth/invalid-email') {
+      setFieldError('login-email', 'Invalid email address.');
+    } else if (code === 'auth/user-not-found') {
+      setFieldError('login-email', 'No account found with this email.');
+    } else if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+      setFieldError('login-password', 'Incorrect password.');
+    } else {
+      showAuthError(friendlyAuthError(code));
+    }
   }
 };
 
@@ -400,13 +424,15 @@ window.handleRegister = async () => {
   const name     = document.getElementById('reg-name').value.trim();
   const email    = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
-  if (!name || !email || !password) return showAuthError('Please fill in all fields.');
-  if (password.length < 6) return showAuthError('Password must be at least 6 characters.');
+  clearAuthMessages();
+  if (!name)              { setFieldError('reg-name',     'Display name is required.'); return; }
+  if (!email)             { setFieldError('reg-email',    'Email is required.'); return; }
+  if (!password)          { setFieldError('reg-password', 'Password is required.'); return; }
+  if (password.length < 6){ setFieldError('reg-password', 'Password must be at least 6 characters.'); return; }
   const btnEl  = document.getElementById('register-btn-text').closest('button');
   const btnTxt = document.getElementById('register-btn-text');
   btnTxt.innerHTML = '<span class="loading-spinner"></span>Creating…';
   btnEl.disabled = true;
-  clearAuthMessages();
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     // Set display name — if this fails the account was still created; not fatal
@@ -415,7 +441,16 @@ window.handleRegister = async () => {
   } catch (e) {
     btnTxt.textContent = 'Create Account';
     btnEl.disabled = false;
-    showAuthError(friendlyAuthError(e.code));
+    const code = e.code;
+    if (code === 'auth/invalid-email') {
+      setFieldError('reg-email', 'Invalid email address.');
+    } else if (code === 'auth/email-already-in-use') {
+      setFieldError('reg-email', 'This email is already registered.');
+    } else if (code === 'auth/weak-password') {
+      setFieldError('reg-password', 'Password must be at least 6 characters.');
+    } else {
+      showAuthError(friendlyAuthError(code));
+    }
   }
 };
 
