@@ -1656,9 +1656,10 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
   flex: 1; overflow-y: auto; min-height: 0;
   display: flex; flex-direction: column;
   background: var(--bg);
+  scroll-behavior: smooth;
 }
 .ep-view-inner {
-  padding-top: 40px; padding-bottom: 48px;
+  padding-top: 28px; padding-bottom: 64px;
 }
 
 .fv-empty-state {
@@ -1682,7 +1683,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
   .ep-header-sep  { display: none; }
   .ep-textarea    { padding-top: 28px; font-size: 13px; }
   .ep-preview-inner { padding-top: 20px; }
-  .ep-view-inner    { padding-top: 20px; }
+  .ep-view-inner    { padding-top: 16px; }
 }
 
 
@@ -1691,12 +1692,12 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
    Applied to: .fv-content and .md-preview-content
    via the .md-rendered class on both elements.
 ════════════════════════════════════════ */
-.md-rendered h1,.md-rendered h2,.md-rendered h3,.md-rendered h4 { color: var(--text); font-family: var(--font); font-weight: 600; letter-spacing: -.2px; margin: 36px 0 10px; }
-.md-rendered h1 { font-size: 18px; font-weight: 600; letter-spacing: -.3px; margin-top: 4px; }
+.md-rendered h1,.md-rendered h2,.md-rendered h3,.md-rendered h4 { color: var(--text); font-family: var(--font); font-weight: 600; letter-spacing: -.2px; margin: 28px 0 8px; }
+.md-rendered h1 { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin-top: 0; margin-bottom: 12px; }
 .md-rendered h2 { font-size: 15px; font-weight: 600; letter-spacing: -.1px; color: var(--text2); margin-top: 40px; text-transform: uppercase; font-size: 11px; letter-spacing: .8px; }
-.md-rendered h3 { font-size: 14px; font-weight: 600; }
-.md-rendered h4 { font-size: 13px; font-weight: 600; color: var(--text2); }
-.md-rendered p  { margin-bottom: 16px; font-size: 15px; line-height: 1.9; color: var(--text); }
+.md-rendered h3 { font-size: 14px; font-weight: 600; margin-top: 22px; }
+.md-rendered h4 { font-size: 13px; font-weight: 600; color: var(--text2); margin-top: 16px; }
+.md-rendered p  { margin-bottom: 14px; font-size: 15px; line-height: 1.7; color: var(--text); }
 .md-rendered strong { color: var(--text); font-weight: 700; }
 .md-rendered em { font-style: italic; color: var(--text); }
 .md-rendered h1 em, .md-rendered h2 em, .md-rendered h3 em, .md-rendered h4 em { font-style: normal; font-weight: 400; color: var(--muted); font-size: .9em; }
@@ -1725,7 +1726,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
 }
 .md-rendered pre code { background: none; padding: 0; color: var(--text2); }
 .md-rendered ul,.md-rendered ol { padding-left: 22px; margin-bottom: 16px; }
-.md-rendered li { margin-bottom: 8px; font-size: 15px; line-height: 1.75; color: var(--text); }
+.md-rendered li { margin-bottom: 6px; font-size: 15px; line-height: 1.65; color: var(--text); }
 .md-rendered blockquote {
   border-left: 2px solid var(--border);
   padding: 8px 16px; margin: 16px 0;
@@ -1754,7 +1755,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
 .md-rendered .task-cb--checked { background: var(--accent); border-color: var(--accent); }
 .md-rendered .task-cb--checked::after { content: ''; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
 .md-rendered .task-done .task-label { text-decoration: line-through; color: var(--muted); opacity: .6; }
-.md-rendered .md-callout { display: block; padding: 8px 0 8px 14px; border-radius: 0; margin: 20px 0; font-size: 14px; line-height: 1.8; }
+.md-rendered .md-callout { display: block; padding: 8px 0 8px 14px; border-radius: 0; margin: 20px 0; font-size: 14px; line-height: 1.65; }
 .md-rendered .callout-icon { display: none; }
 .md-rendered .callout-body { color: var(--text2); flex: 1; }
 .md-rendered .callout-info    { background: none; border-left: 2px solid #6366f1; color: var(--text2); }
@@ -1767,7 +1768,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
 .md-rendered .md-collapsible-title::before { content: '▶'; font-size: 8px; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
 .md-rendered .md-collapsible[open] .md-collapsible-title::before { transform: rotate(90deg); }
 .md-rendered .md-collapsible-title::-webkit-details-marker { display: none; }
-.md-rendered .md-collapsible-body { padding: 12px 14px; font-size: 14px; color: var(--text2); border-top: 1px solid var(--border2); line-height: 1.75; }
+.md-rendered .md-collapsible-body { padding: 12px 14px; font-size: 14px; color: var(--text2); border-top: 1px solid var(--border2); line-height: 1.65; }
 
 .md-panel-footer {
   display: flex; align-items: center; justify-content: space-between;
@@ -2856,8 +2857,8 @@ tr.exam-row.drag-over {
 #fv-toc-sidebar {
   display: none; /* shown by JS when headings exist */
   position: fixed;
-  /* Fix 5: align top with content — 52px header + 40px content padding-top */
-  top: calc(52px + 40px);
+  /* Fix 5: align top with content — 52px header + 28px content padding-top */
+  top: calc(52px + 28px);
   bottom: 0;
   /* Fix 2: push further left, more breathing room from content */
   right: calc(50% + var(--ep-col) / 2 + 32px);
