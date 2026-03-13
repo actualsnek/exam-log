@@ -1835,7 +1835,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
 }
 .md-rendered .task-list { list-style: none; padding-left: 4px; }
 .md-rendered .task-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
-.md-rendered .task-cb { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border: 1.5px solid var(--border2); border-radius: 3px; flex-shrink: 0; margin-top: 1px; cursor: pointer; background: none; padding: 0; transition: all .15s; }
+.md-rendered .task-cb { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border: 1.5px solid var(--border2); border-radius: 3px; flex-shrink: 0; margin-top: 4px; cursor: pointer; background: none; padding: 0; transition: all .15s; }
 .md-rendered .task-cb:hover { border-color: var(--accent); background: var(--accent-bg); }
 .md-rendered .task-cb--checked { background: var(--accent); border-color: var(--accent); }
 .md-rendered .task-cb--checked::after { content: ''; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
