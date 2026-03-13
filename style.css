@@ -2834,3 +2834,150 @@ tr.exam-row.drag-over {
     padding-bottom: 24px;
   }
 }
+
+/* ════════════════════════════════════════
+   FV TOC — SHARED
+════════════════════════════════════════ */
+.ep-btn-toc {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 10px; height: 30px; border-radius: var(--r);
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); font-size: 12px; font-weight: 500;
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--transition), color var(--transition);
+}
+.ep-btn-toc:hover { background: var(--surface3); color: var(--text); }
+
+/* ════════════════════════════════════════
+   FV TOC — DESKTOP SIDEBAR
+   Sits in the left gutter beside the 640px content column.
+   Only visible on wide viewports (>= 1080px).
+════════════════════════════════════════ */
+#fv-toc-sidebar {
+  display: none; /* shown by JS when headings exist */
+  position: fixed;
+  top: 52px; /* below ep-header */
+  bottom: 0;
+  /* Right edge of sidebar = left edge of content column */
+  right: calc(50% + var(--ep-col) / 2 + 16px);
+  width: 200px;
+  padding: 32px 0 48px;
+  overflow-y: auto;
+  z-index: 10;
+  /* Subtle scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#fv-toc-sidebar::-webkit-scrollbar { width: 3px; }
+#fv-toc-sidebar::-webkit-scrollbar-track { background: transparent; }
+#fv-toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.fv-toc-label {
+  font-size: 10px; font-weight: 600; letter-spacing: .8px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px; padding-left: 2px;
+}
+.fv-toc-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.fv-toc-item {
+  display: block; width: 100%;
+  background: none; border: none; text-align: left;
+  cursor: pointer; padding: 4px 8px 4px 0;
+  font-size: 12px; line-height: 1.4;
+  color: var(--text2); border-radius: 4px;
+  transition: color var(--transition), background var(--transition);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fv-toc-item:hover { color: var(--text); }
+.fv-toc-item.fv-toc--active { color: var(--accent); font-weight: 600; }
+/* Indent by heading level */
+.fv-toc-item[data-level="1"] { padding-left: 0;  font-size: 12px; font-weight: 500; }
+.fv-toc-item[data-level="2"] { padding-left: 10px; font-size: 11.5px; }
+.fv-toc-item[data-level="3"] { padding-left: 20px; font-size: 11px; color: var(--muted); }
+.fv-toc-item[data-level="4"] { padding-left: 28px; font-size: 11px; color: var(--muted); }
+.fv-toc-item[data-level="3"].fv-toc--active,
+.fv-toc-item[data-level="4"].fv-toc--active { color: var(--accent); }
+
+/* Only show sidebar on wide screens */
+@media (max-width: 1079px) {
+  #fv-toc-sidebar { display: none !important; }
+  .fv-toc-btn-label { display: none; } /* icon-only on mid */
+}
+@media (min-width: 1080px) {
+  .fv-toc-btn-label { display: inline; }
+  /* hide mobile TOC button on desktop — sidebar replaces it */
+  #fv-toc-btn { display: none !important; }
+}
+
+/* ════════════════════════════════════════
+   FV TOC — MOBILE BOTTOM SHEET
+════════════════════════════════════════ */
+.fv-toc-sheet-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 320;
+  animation: fadeIn .15s ease;
+}
+.fv-toc-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 321;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  border-top: 1px solid var(--border);
+  max-height: 70vh;
+  display: flex; flex-direction: column;
+  animation: sheetUp .2s cubic-bezier(.32,1,.36,1);
+}
+.fv-toc-sheet.is-closing {
+  animation: sheetDown .18s ease forwards;
+  pointer-events: none;
+}
+@keyframes sheetUp   { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes sheetDown { from { transform: translateY(0); }    to { transform: translateY(100%); } }
+@keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+
+.fv-toc-sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border); margin: 10px auto 0;
+  flex-shrink: 0;
+}
+.fv-toc-sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.fv-toc-sheet-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+}
+.fv-toc-sheet-close {
+  background: none; border: none; color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+  transition: background var(--transition);
+}
+.fv-toc-sheet-close:hover { background: var(--surface2); }
+.fv-toc-sheet-list {
+  overflow-y: auto; padding: 10px 0 max(20px, env(safe-area-inset-bottom));
+  flex: 1; min-height: 0;
+}
+.fv-toc-sheet-item {
+  display: block; width: 100%; background: none; border: none;
+  text-align: left; cursor: pointer;
+  padding: 9px 20px; font-size: 13px; line-height: 1.35;
+  color: var(--text2); transition: background var(--transition), color var(--transition);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fv-toc-sheet-item:hover { background: var(--surface2); color: var(--text); }
+.fv-toc-sheet-item[data-level="1"] { color: var(--text); font-weight: 500; }
+.fv-toc-sheet-item[data-level="2"] { padding-left: 32px; font-size: 12.5px; }
+.fv-toc-sheet-item[data-level="3"] { padding-left: 44px; font-size: 12px; color: var(--muted); }
+.fv-toc-sheet-item[data-level="4"] { padding-left: 54px; font-size: 12px; color: var(--muted); }
+
+/* Show TOC button only on mobile */
+@media (min-width: 1080px) {
+  .fv-toc-sheet-overlay,
+  .fv-toc-sheet { display: none !important; }
+}

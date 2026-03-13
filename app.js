@@ -2891,6 +2891,143 @@ window.openFieldView = (examId, field) => {
 
   document.getElementById('fv-panel').style.display = 'flex';
   lockScroll();
+
+  // Build TOC after render
+  requestAnimationFrame(() => buildFvToc());
+};
+
+// ── TOC ──────────────────────────────────────────────
+let _fvTocScrollSpy = null;
+
+function buildFvToc() {
+  const content   = document.getElementById('fv-content');
+  const sidebar   = document.getElementById('fv-toc-sidebar');
+  const tocBtn    = document.getElementById('fv-toc-btn');
+  const sheetList = document.getElementById('fv-toc-sheet-list');
+  if (!content || !sidebar) return;
+
+  // Collect headings
+  const headings = Array.from(content.querySelectorAll('h1,h2,h3,h4'));
+
+  // Hide everything if fewer than 2 headings
+  if (headings.length < 2) {
+    sidebar.style.display = 'none';
+    if (tocBtn) tocBtn.style.display = 'none';
+    return;
+  }
+
+  // Build items array
+  const items = headings.map(h => ({
+    el:    h,
+    id:    h.id,
+    text:  h.textContent,
+    level: parseInt(h.tagName[1])
+  }));
+
+  // ── Desktop sidebar ──────────────────────────
+  const list = document.createElement('ul');
+  list.className = 'fv-toc-list';
+  items.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className   = 'fv-toc-item';
+    btn.dataset.level = item.level;
+    btn.dataset.id    = item.id;
+    btn.textContent   = item.text;
+    btn.title         = item.text;
+    btn.onclick = () => fvTocScrollTo(item.id);
+    list.appendChild(btn);
+  });
+
+  sidebar.innerHTML = '';
+  const label = document.createElement('div');
+  label.className = 'fv-toc-label';
+  label.textContent = 'Contents';
+  sidebar.appendChild(label);
+  sidebar.appendChild(list);
+  sidebar.style.display = 'block';
+
+  // ── Mobile sheet list ────────────────────────
+  if (sheetList) {
+    sheetList.innerHTML = '';
+    items.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className     = 'fv-toc-sheet-item';
+      btn.dataset.level = item.level;
+      btn.textContent   = item.text;
+      btn.title         = item.text;
+      btn.onclick = () => { closeFvTocSheet(); setTimeout(() => fvTocScrollTo(item.id), 180); };
+      sheetList.appendChild(btn);
+    });
+  }
+
+  // Show mobile TOC button
+  if (tocBtn) tocBtn.style.display = 'flex';
+
+  // ── Scroll spy ──────────────────────────────
+  const viewBody = document.getElementById('fv-view-body');
+  if (_fvTocScrollSpy) { viewBody.removeEventListener('scroll', _fvTocScrollSpy); }
+  _fvTocScrollSpy = () => {
+    const scrollTop = viewBody.scrollTop;
+    let activeId = items[0].id;
+    for (const item of items) {
+      const el = document.getElementById(item.id);
+      if (!el) continue;
+      if (el.offsetTop - 80 <= scrollTop) activeId = item.id;
+    }
+    sidebar.querySelectorAll('.fv-toc-item').forEach(b => {
+      b.classList.toggle('fv-toc--active', b.dataset.id === activeId);
+    });
+  };
+  viewBody.addEventListener('scroll', _fvTocScrollSpy, { passive: true });
+  _fvTocScrollSpy(); // run once on open
+}
+
+function fvTocScrollTo(id) {
+  const el       = document.getElementById(id);
+  const viewBody = document.getElementById('fv-view-body');
+  if (!el || !viewBody) return;
+  const offset = el.offsetTop - 72;
+  viewBody.scrollTo({ top: offset, behavior: 'smooth' });
+}
+
+function destroyFvToc() {
+  const viewBody = document.getElementById('fv-view-body');
+  if (viewBody && _fvTocScrollSpy) {
+    viewBody.removeEventListener('scroll', _fvTocScrollSpy);
+    _fvTocScrollSpy = null;
+  }
+  const sidebar = document.getElementById('fv-toc-sidebar');
+  if (sidebar) sidebar.style.display = 'none';
+  const tocBtn = document.getElementById('fv-toc-btn');
+  if (tocBtn) tocBtn.style.display = 'none';
+}
+
+// Mobile sheet open/close
+window.toggleFvTocSheet = () => {
+  const sheet = document.getElementById('fv-toc-sheet');
+  if (!sheet) return;
+  sheet.style.display === 'none' ? openFvTocSheet() : closeFvTocSheet();
+};
+
+function openFvTocSheet() {
+  const overlay = document.getElementById('fv-toc-sheet-overlay');
+  const sheet   = document.getElementById('fv-toc-sheet');
+  if (!sheet) return;
+  overlay.style.display = 'block';
+  sheet.style.display   = 'flex';
+  sheet.classList.remove('is-closing');
+}
+
+window.closeFvTocSheet = () => {
+  const overlay = document.getElementById('fv-toc-sheet-overlay');
+  const sheet   = document.getElementById('fv-toc-sheet');
+  if (!sheet || sheet.style.display === 'none') return;
+  sheet.classList.add('is-closing');
+  sheet.addEventListener('animationend', () => {
+    sheet.style.display   = 'none';
+    overlay.style.display = 'none';
+    sheet.classList.remove('is-closing');
+  }, { once: true });
 };
 
 window.switchToEditMode = () => {
@@ -2938,6 +3075,7 @@ function forceCloseFieldView() {
   if (discardEl && discardEl.style.display !== 'none') {
     animateOut(discardEl, () => {});
   }
+  destroyFvToc();
   animateOut(document.getElementById('fv-panel'), () => {
     fvExamId = null;
     fvField  = null;
@@ -2967,6 +3105,7 @@ window.closeFieldView = () => {
   }
   clearTimeout(fvSaveTimer);
   fvSaveTimer = null;
+  destroyFvToc();
   animateOut(document.getElementById('fv-panel'), () => {
     fvExamId = null;
     fvField  = null;
@@ -2998,6 +3137,7 @@ window.saveFvPanel = async () => {
       contentEl.innerHTML = value.trim() ? parseMd(value) : `<div class="fv-empty-state">Nothing added yet.</div>`;
       document.getElementById('fv-view-mode').style.display = 'flex';
       document.getElementById('fv-edit-mode').style.display = 'none';
+      requestAnimationFrame(() => buildFvToc());
       // Surgical: refresh only the field buttons in the open detail-row
       const examRow = document.getElementById('row-' + fvExamId);
       const detailTr = examRow && examRow.nextElementSibling;
@@ -3367,11 +3507,18 @@ function parseMd(md) {
   if (!md) return '';
   let html = escHtml(md);
 
-  // Headings — most specific first
-  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
-  html = html.replace(/^### (.+)$/gm,  '<h3>$1</h3>');
-  html = html.replace(/^## (.+)$/gm,   '<h2>$1</h2>');
-  html = html.replace(/^# (.+)$/gm,    '<h1>$1</h1>');
+  // Headings — most specific first, with slug IDs for TOC anchors
+  const _slugCount = {};
+  function _slugify(raw) {
+    // raw is already escHtml'd — strip tags, lowercase, replace non-alphanum
+    const text = raw.replace(/<[^>]+>/g, '').toLowerCase().replace(/[^a-z0-9\u0900-\u097f]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
+    _slugCount[text] = (_slugCount[text] || 0) + 1;
+    return _slugCount[text] > 1 ? text + '-' + _slugCount[text] : text;
+  }
+  html = html.replace(/^#### (.+)$/gm, (_, t) => `<h4 id="${_slugify(t)}">${t}</h4>`);
+  html = html.replace(/^### (.+)$/gm,  (_, t) => `<h3 id="${_slugify(t)}">${t}</h3>`);
+  html = html.replace(/^## (.+)$/gm,   (_, t) => `<h2 id="${_slugify(t)}">${t}</h2>`);
+  html = html.replace(/^# (.+)$/gm,    (_, t) => `<h1 id="${_slugify(t)}">${t}</h1>`);
 
   // HR
   html = html.replace(/^---$/gm, '<hr>');

@@ -625,6 +625,10 @@
           <span class="ep-exam-name" id="fv-sub">SSC CGL 2025</span>
         </div>
         <div class="ep-header-right">
+          <button class="ep-btn-toc" id="fv-toc-btn" onclick="toggleFvTocSheet()" title="Contents" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+            <span class="fv-toc-btn-label">Contents</span>
+          </button>
           <button class="ep-btn-edit" id="fv-edit-btn" onclick="switchToEditMode()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             Edit
@@ -632,7 +636,9 @@
         </div>
       </div>
 
-      <div class="ep-view-body">
+      <div class="ep-view-body" id="fv-view-body">
+        <!-- Desktop TOC sidebar (injected by JS) -->
+        <div id="fv-toc-sidebar"></div>
         <div class="ep-view-inner">
           <div id="fv-content" class="md-rendered"></div>
         </div>
@@ -850,6 +856,21 @@
     </div>
   </div>
 </template>
+<!-- ═══════════════════════════════════════════════
+     TOC BOTTOM SHEET (mobile)
+════════════════════════════════════════════════ -->
+<div id="fv-toc-sheet-overlay" class="fv-toc-sheet-overlay" style="display:none" onclick="closeFvTocSheet()"></div>
+<div id="fv-toc-sheet" class="fv-toc-sheet" style="display:none">
+  <div class="fv-toc-sheet-handle"></div>
+  <div class="fv-toc-sheet-header">
+    <span class="fv-toc-sheet-title">Contents</span>
+    <button class="fv-toc-sheet-close" onclick="closeFvTocSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="fv-toc-sheet-list" id="fv-toc-sheet-list"></div>
+</div>
+
 <script type="module" src="app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
