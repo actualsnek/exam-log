@@ -298,6 +298,16 @@ button:disabled {
   font-size: 12px;
   margin-bottom: 14px;
 }
+.field-input--error {
+  border-color: var(--no) !important;
+  background: color-mix(in srgb, var(--no-bg) 60%, transparent) !important;
+}
+.field-hint {
+  display: block; font-size: 11.5px; color: var(--no);
+  margin-top: 4px; min-height: 0; line-height: 1.4;
+  transition: opacity .15s;
+}
+.field-hint:empty { display: none; }
 .auth-success {
   background: var(--open-bg);
   color: var(--open);
