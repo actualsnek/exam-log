@@ -3106,6 +3106,7 @@ window.closeFieldView = () => {
   clearTimeout(fvSaveTimer);
   fvSaveTimer = null;
   destroyFvToc();
+  if (window._resetProgressBar) window._resetProgressBar();
   animateOut(document.getElementById('fv-panel'), () => {
     fvExamId = null;
     fvField  = null;
@@ -3674,15 +3675,15 @@ function safeUrl(url) {
     bar.style.width = pct + '%';
   }
 
-  // Attach on view open, reset on view close
+  window._resetProgressBar = () => { bar.style.width = '0%'; };
+
+  // Attach scroll listener when ep-view-body appears
   const _observer = new MutationObserver(() => {
     const el = document.querySelector('.ep-view-body');
     if (el && !el._progressAttached) {
       el._progressAttached = true;
       el.addEventListener('scroll', updateProgress, { passive: true });
       updateProgress();
-    } else if (!el) {
-      bar.style.width = '0%';
     }
   });
   _observer.observe(document.body, { childList: true, subtree: true });
