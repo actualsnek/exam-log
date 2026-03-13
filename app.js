@@ -3658,3 +3658,30 @@ function safeUrl(url) {
     : 'https://' + trimmed;
   return escHtml(full);
 }
+
+// ── Reading progress bar ──
+(function() {
+  const bar = document.createElement('div');
+  bar.id = 'fv-progress-bar';
+  document.body.appendChild(bar);
+
+  function updateProgress() {
+    const scrollEl = document.querySelector('.ep-view-body');
+    if (!scrollEl) return;
+    const scrollTop = scrollEl.scrollTop;
+    const scrollHeight = scrollEl.scrollHeight - scrollEl.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+
+  // Attach on view open — re-attach whenever ep-view-body appears
+  const _observer = new MutationObserver(() => {
+    const el = document.querySelector('.ep-view-body');
+    if (el && !el._progressAttached) {
+      el._progressAttached = true;
+      el.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+    }
+  });
+  _observer.observe(document.body, { childList: true, subtree: true });
+})();
