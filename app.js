@@ -2946,10 +2946,6 @@ function buildFvToc() {
   sidebar.appendChild(list);
   sidebar.style.display = 'block';
 
-  // Mark view-inner so CSS can offset content column
-  const viewInner = document.querySelector('.ep-view-inner');
-  if (viewInner) viewInner.classList.add('toc-visible');
-
   // ── Mobile sheet list ────────────────────────
   if (sheetList) {
     sheetList.innerHTML = '';
@@ -3004,8 +3000,6 @@ function destroyFvToc() {
   if (sidebar) sidebar.style.display = 'none';
   const tocBtn = document.getElementById('fv-toc-btn');
   if (tocBtn) tocBtn.style.display = 'none';
-  const viewInner = document.querySelector('.ep-view-inner');
-  if (viewInner) viewInner.classList.remove('toc-visible');
 }
 
 // Mobile sheet open/close
