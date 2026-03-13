@@ -1701,9 +1701,9 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
 
 /* H1 — document title, only appears once at top */
 .md-rendered h1 {
-  font-size: 26px; font-weight: 700;
+  font-size: 30px; font-weight: 700;
   letter-spacing: -.5px; line-height: 1.2;
-  margin-top: 0; margin-bottom: 14px;
+  margin-top: 0; margin-bottom: 16px;
   color: var(--text);
 }
 
@@ -1722,7 +1722,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
   font-size: 17px; font-weight: 600;
   letter-spacing: -.15px;
   color: var(--text);
-  margin-top: 34px; margin-bottom: 6px;
+  margin-top: 36px; margin-bottom: 6px;
 }
 
 /* H4 — inline label, subtle */
@@ -1733,7 +1733,19 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
   letter-spacing: -.05px;
 }
 
-.md-rendered p  { margin-bottom: 14px; font-size: 15px; line-height: 1.7; color: var(--text); }
+/* ── Consecutive heading rules (Ghost/Tailwind/Obsidian pattern) ──
+   When a heading immediately follows another heading, strip the top
+   margin so they read as parent→child, not two separate blocks.    */
+.md-rendered h2 + h3 { margin-top: 10px; }
+.md-rendered h3 + h4 { margin-top: 8px; }
+.md-rendered h2 + h4 { margin-top: 10px; }
+
+/* First heading after H2 border also shouldn't re-add padding */
+.md-rendered h2 + p,
+.md-rendered h2 + ul,
+.md-rendered h2 + ol { margin-top: 0; }
+
+.md-rendered p  { margin-bottom: 18px; font-size: 15px; line-height: 1.7; color: var(--text); }
 .md-rendered strong { color: var(--text); font-weight: 700; }
 .md-rendered em { font-style: italic; color: var(--text); }
 .md-rendered h1 em, .md-rendered h2 em, .md-rendered h3 em, .md-rendered h4 em { font-style: normal; font-weight: 400; color: var(--muted); font-size: .9em; }
@@ -1761,7 +1773,7 @@ td.td-year { font-family: var(--mono); font-size: 11px; color: var(--text2); }
   margin-bottom: 8px; font-weight: 600;
 }
 .md-rendered pre code { background: none; padding: 0; color: var(--text2); }
-.md-rendered ul,.md-rendered ol { padding-left: 24px; margin-bottom: 16px; margin-top: 4px; }
+.md-rendered ul,.md-rendered ol { padding-left: 24px; margin-top: 10px; margin-bottom: 18px; }
 .md-rendered li { margin-bottom: 4px; font-size: 15px; line-height: 1.65; color: var(--text); }
 .md-rendered blockquote {
   border-left: 2px solid var(--border);
